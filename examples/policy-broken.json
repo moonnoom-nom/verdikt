@@ -1,0 +1,6 @@
+{
+  "environment_tier": "produciton",
+  "network_exposure": "internal",
+  "data_sensitivity": "public",
+  "thresholds": { "warn": 4.0, "block": 7.0 }
+}

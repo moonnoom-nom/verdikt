@@ -1,0 +1,6 @@
+{
+  "environment_tier": "production",
+  "network_exposure": "internet-facing",
+  "data_sensitivity": "confidential",
+  "thresholds": { "warn": 3.0, "block": 5.0 }
+}
