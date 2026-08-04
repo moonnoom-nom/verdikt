@@ -37,3 +37,76 @@ Correctly raised: PolicyError: Invalid value for 'environment_tier':
 
 Kept the broken file as a future pytest fixture.
 
+## 25 July — Module 6: Decision Engine (FR07, FR09)
+
+Built decision.py. Compares scored vulnerabilities against policy thresholds,
+produces the Allow/Warn/Block verdict and CI exit code.
+
+Design decisions:
+- Verdict(str, Enum): inherits str so it serialises straight to JSON and
+  prints cleanly, while Enum catches typos at runtime that a bare string
+  comparison would miss silently.
+- Worst-case drives the verdict, not an average. A project's single highest
+  contextual score determines the outcome, because averaging would let one
+  critical finding hide behind many low ones — the opposite of what a
+  security gate should do.
+- WARN returns exit code 0, BLOCK returns 1. Keeping them distinct matters:
+  if a warning failed the build, every advisory would halt delivery and the
+  warn/block distinction would be meaningless.
+- "contributing" list holds only the vulnerabilities that caused the verdict,
+  sorted highest score first, not every finding scanned — a developer needs
+  to know what to fix, not a full inventory.
+
+Verified end to end: requests 2.19.0 (CVSS 7.5) -> ALLOW/exit 0 under dev
+policy, BLOCK/exit 1 under production. Same vulnerability, same code, verdict
+flips on policy alone.
+
+## 25 July — Bug: Decimal vs float in severity extraction
+
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+The cvss library returns base_score as decimal.Decimal, not float. Fixed by
+converting at the extraction boundary (severity.py) rather than patching
+scoring.py, so every downstream module only ever handles plain floats.
+
+## 26 July — Deconfounding the evaluation
+
+Identified that policy-dev.json and policy-prod.json vary
+both contextual attributes AND thresholds simultaneously, making it impossible
+to prove a decision change came from context rather than a stricter threshold.
+
+Added policy-context-low.json and policy-context-high.json: identical
+thresholds (warn 4.0, block 7.0), varying only environment tier, network
+exposure and data sensitivity. This pair is now the RQ1/RQ2 evidence.
+policy-dev.json/policy-prod.json remain as a separate demonstration of
+threshold-based risk appetite, not used as RQ evidence.
+
+Verified: LOW CONTEXT -> WARN, HIGH CONTEXT -> BLOCK, same thresholds in both.
+Two of ten requests vulnerabilities (PYSEC-2018-28, PYSEC-2023-74) had no
+parseable CVSS v3 vector and correctly floored the verdict at WARN via
+unscored() rather than crashing or being silently dropped — first real-world
+trigger of that path, not manufactured.
+
+## 26 July- feedback taken from AI Tool
+
+Ran the tool's output past ChatGPT for a second opinion and it caught a real
+transparency bug: decide() discarded all non-blocking findings once BLOCK
+fired, so a "BLOCK, 1 finding" report was silently hiding 7 warning-level
+findings and 2 unscored ones from the same scan. Separated verdict logic
+(worst-case wins) from reporting logic (show everything) — contributing now
+always lists blocking + warning + unscored together.
+
+Added a reconciliation count (N of M fetched records evaluated) so every
+OSV record is provably accounted for, never silently dropped.
+
+Verified: requests 2.19.0, all 10 fetched records accounted for under both
+LOW CONTEXT (0 block, 0 warn, 2 unscored) and HIGH CONTEXT (1 block, 7 warn,
+2 unscored).
+
+Follow-up fix: the WARN summary omitted the count of findings that scored
+clean (below the warn threshold) whenever unscored items were also present,
+because the ALLOW-count logic had been added to the wrong branch — WARN
+fires ahead of ALLOW whenever unscored items exist, even with zero actual
+warning-range findings. Moved the count into the branch that actually
+executes. Verified: LOW CONTEXT now reads "8 scored finding(s) below the
+warning threshold; 2 unscored finding(s) requiring review" — all 10 named.

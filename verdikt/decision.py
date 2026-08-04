@@ -17,8 +17,6 @@ class Verdict(str, Enum):
 class Decision(NamedTuple):
     verdict: Verdict
     exit_code: int
-    # Only the vulnerabilities that actually caused the verdict, not every
-    # finding — a developer needs to know what to fix, not what was scanned.
     contributing: list[ScoredVulnerability]
     summary: str
 
@@ -28,45 +26,44 @@ def decide(scored: list[ScoredVulnerability], policy: Policy) -> Decision:
     if not scored:
         return Decision(Verdict.ALLOW, 0, [], "No known vulnerabilities found.")
 
-    # Worst-case wins: the project verdict is driven by its single highest
-    # contextual score. Averaging would let one critical finding hide behind
-    # many low ones, which is the opposite of what a security gate must do.
-    blocking = [v for v in scored if v.contextual_score >= policy.block_threshold]
-    warning = [
-        v for v in scored
-        if policy.warn_threshold <= v.contextual_score < policy.block_threshold
-    ]
+    unscored_items = [v for v in scored if v.raw_score is None]
+    scoreable = [v for v in scored if v.raw_score is not None]
+
+    blocking = [v for v in scoreable if v.raw_score >= policy.block_threshold]
+    warning = [v for v in scoreable if policy.warn_threshold <= v.raw_score < policy.block_threshold]
+    # Named explicitly rather than left as an implied leftover count, so it
+    # can be reported even when the overall verdict is WARN because of
+    # unscored items, not because any finding actually sits in WARN range.
+    allow = [v for v in scoreable if v.raw_score < policy.warn_threshold]
+
+    contributing = (
+        sorted(blocking, key=lambda v: -v.raw_score)
+        + sorted(warning, key=lambda v: -v.raw_score)
+        + unscored_items
+    )
 
     if blocking:
-        # Exit code 1 signals failure to the CI runner (FR09). Sorted highest
-        # first so the most urgent item is the first thing a developer reads.
-        return Decision(
-            verdict=Verdict.BLOCK,
-            exit_code=1,
-            contributing=sorted(blocking, key=lambda v: -v.contextual_score),
-            summary=(
-                f"{len(blocking)} dependency finding(s) at or above the block "
-                f"threshold of {policy.block_threshold}."
-            ),
-        )
+        parts = [f"{len(blocking)} blocking finding(s) at or above {policy.block_threshold}"]
+        if warning:
+            parts.append(f"{len(warning)} additional finding(s) at WARN level")
+        if unscored_items:
+            parts.append(f"{len(unscored_items)} additional unscored finding(s) requiring review")
+        return Decision(Verdict.BLOCK, 1, contributing, "; ".join(parts) + ".")
 
-    if warning:
-        # Exit code 0: a warning must not fail the build. Warning and blocking
-        # are separated deliberately — conflating them would make the gate
-        # unusable, because every advisory would halt delivery.
-        return Decision(
-            verdict=Verdict.WARN,
-            exit_code=0,
-            contributing=sorted(warning, key=lambda v: -v.contextual_score),
-            summary=(
-                f"{len(warning)} finding(s) between the warn threshold of "
-                f"{policy.warn_threshold} and the block threshold."
-            ),
-        )
+    if warning or unscored_items:
+        parts = []
+        if warning:
+            parts.append(
+                f"{len(warning)} finding(s) between warn ({policy.warn_threshold}) "
+                f"and block ({policy.block_threshold})"
+            )
+        if allow:
+            # Even inside a WARN verdict, findings that scored clean must not
+            # vanish from the text — otherwise "10 of 10 evaluated" has
+            # nothing in the summary itself accounting for 8 of them.
+            parts.append(f"{len(allow)} scored finding(s) below the warning threshold")
+        if unscored_items:
+            parts.append(f"{len(unscored_items)} unscored finding(s) requiring review")
+        return Decision(Verdict.WARN, 0, contributing, "; ".join(parts) + ".")
 
-    return Decision(
-        verdict=Verdict.ALLOW,
-        exit_code=0,
-        contributing=[],
-        summary=f"All {len(scored)} finding(s) below the warn threshold.",
-    )
+    return Decision(Verdict.ALLOW, 0, [], f"All {len(allow)} finding(s) below the warning threshold.")
