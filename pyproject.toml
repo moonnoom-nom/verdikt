@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verdikt"
+version = "0.1.0"
+description = "Environment-aware dependency risk scoring for Python microservices in CI/CD"
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "cvss",
+]
+
+[tool.setuptools.packages.find]
+# Only package the verdikt/ directory. Without this, setuptools would also
+# try to package tests/ and examples/, which are development artefacts, not
+# part of the shipped tool.
+include = ["verdikt*"]
+
+[tool.pytest.ini_options]
+# Tells pytest where to look for tests, and adds the project root to the
+# import path so `from verdikt.parser import ...` resolves the same way it
+# does when running the CLI directly.
+testpaths = ["tests"]
+pythonpath = ["."]
