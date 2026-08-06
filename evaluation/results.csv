@@ -1,0 +1,6 @@
+baseline_blocking_count,context_sensitivity_score,decision_change_rate,dependencies,friction_reduction_ratio,high_context_verdict,low_context_verdict,malformed_lines,repository,scored_findings,total_findings,unscored_findings,verdict_changed,verdikt_low_blocking_count
+24,5.67,0.978,18,1.0,BLOCK,WARN,2,contoso-ads-2016,46,65,20,True,0
+28,5.45,0.971,35,1.0,BLOCK,WARN,0,azure-python-labs-2019,68,97,31,True,0
+22,5.52,1.0,37,1.0,BLOCK,WARN,0,functions-data-cleaning-2019,60,94,34,True,0
+223,5.96,0.94,145,1.0,BLOCK,WARN,0,aks-openai-2023,399,486,110,True,0
+2,5.72,1.0,13,1.0,BLOCK,ALLOW,2,assistant-openai-2024,6,6,0,True,0

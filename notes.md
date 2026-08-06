@@ -109,4 +109,30 @@ because the ALLOW-count logic had been added to the wrong branch — WARN
 fires ahead of ALLOW whenever unscored items exist, even with zero actual
 warning-range findings. Moved the count into the branch that actually
 executes. Verified: LOW CONTEXT now reads "8 scored finding(s) below the
-warning threshold; 2 unscored finding(s) requiring review" — all 10 named.
+
+## 5 August — Module 9: Pytest Suite (NFR03)
+
+41 tests across 8 files, 86% coverage. NFR03 required 70%.
+
+Environment issue first: C: drive was completely full (0 bytes), which blocked
+pip install and was also breaking File Explorer. Moved Downloads to D:,
+recovered 21GB.
+
+Import error on first run — pytest adds tests/ to the path, not the project
+root, so `from verdikt.parser import ...` failed. Fixed properly with
+pyproject.toml (PEP 621) rather than sys.path manipulation in each test file;
+same file also makes the tool pip-installable later.
+
+Coverage distribution is deliberate: parser, cache, scoring, severity at 100%,
+decision 97%, policy 97%, orchestrator 94%. cli.py at 0% because it is a thin
+entry point whose logic lives in the modules it calls, and whose behaviour is
+verified end-to-end by the CI workflow.
+
+Most important test: test_same_vulnerability_different_verdict_by_context in
+test_orchestrator.py. It asserts the project's central hypothesis — identical
+vulnerability, identical thresholds, different context, different verdict. If
+the attenuation model breaks, that test fails immediately.
+
+Regression tests added for both bugs found earlier: the Decimal/float
+conversion in severity extraction, and the transparency bug where BLOCK
+discarded non-blocking findings.

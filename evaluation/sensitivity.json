@@ -1,0 +1,167 @@
+[
+  {
+    "repository": "contoso-ads-2016",
+    "configuration": "conservative",
+    "scored_findings": 46,
+    "low_context_verdict": "WARN",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 2.73,
+    "band_change_rate": 0.978,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "contoso-ads-2016",
+    "configuration": "default",
+    "scored_findings": 46,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 5.67,
+    "band_change_rate": 0.978,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "contoso-ads-2016",
+    "configuration": "aggressive",
+    "scored_findings": 46,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 6.29,
+    "band_change_rate": 0.978,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "azure-python-labs-2019",
+    "configuration": "conservative",
+    "scored_findings": 68,
+    "low_context_verdict": "WARN",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 2.63,
+    "band_change_rate": 0.971,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "azure-python-labs-2019",
+    "configuration": "default",
+    "scored_findings": 68,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 5.45,
+    "band_change_rate": 0.971,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "azure-python-labs-2019",
+    "configuration": "aggressive",
+    "scored_findings": 68,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 6.04,
+    "band_change_rate": 0.971,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "functions-data-cleaning-2019",
+    "configuration": "conservative",
+    "scored_findings": 60,
+    "low_context_verdict": "WARN",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 2.66,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "functions-data-cleaning-2019",
+    "configuration": "default",
+    "scored_findings": 60,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 5.52,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "functions-data-cleaning-2019",
+    "configuration": "aggressive",
+    "scored_findings": 60,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 6.12,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "aks-openai-2023",
+    "configuration": "conservative",
+    "scored_findings": 399,
+    "low_context_verdict": "WARN",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 2.87,
+    "band_change_rate": 0.94,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "aks-openai-2023",
+    "configuration": "default",
+    "scored_findings": 399,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 5.96,
+    "band_change_rate": 0.94,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "aks-openai-2023",
+    "configuration": "aggressive",
+    "scored_findings": 399,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 6.61,
+    "band_change_rate": 0.94,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "assistant-openai-2024",
+    "configuration": "conservative",
+    "scored_findings": 6,
+    "low_context_verdict": "WARN",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 2.76,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "assistant-openai-2024",
+    "configuration": "default",
+    "scored_findings": 6,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 5.72,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  },
+  {
+    "repository": "assistant-openai-2024",
+    "configuration": "aggressive",
+    "scored_findings": 6,
+    "low_context_verdict": "ALLOW",
+    "high_context_verdict": "BLOCK",
+    "verdict_changed": true,
+    "context_sensitivity_score": 6.34,
+    "band_change_rate": 1.0,
+    "low_context_blocking_count": 0
+  }
+]

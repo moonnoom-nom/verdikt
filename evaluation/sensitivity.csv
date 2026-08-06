@@ -1,0 +1,16 @@
+repository,configuration,scored_findings,low_context_verdict,high_context_verdict,verdict_changed,context_sensitivity_score,band_change_rate,low_context_blocking_count
+contoso-ads-2016,conservative,46,WARN,BLOCK,True,2.73,0.978,0
+contoso-ads-2016,default,46,ALLOW,BLOCK,True,5.67,0.978,0
+contoso-ads-2016,aggressive,46,ALLOW,BLOCK,True,6.29,0.978,0
+azure-python-labs-2019,conservative,68,WARN,BLOCK,True,2.63,0.971,0
+azure-python-labs-2019,default,68,ALLOW,BLOCK,True,5.45,0.971,0
+azure-python-labs-2019,aggressive,68,ALLOW,BLOCK,True,6.04,0.971,0
+functions-data-cleaning-2019,conservative,60,WARN,BLOCK,True,2.66,1.0,0
+functions-data-cleaning-2019,default,60,ALLOW,BLOCK,True,5.52,1.0,0
+functions-data-cleaning-2019,aggressive,60,ALLOW,BLOCK,True,6.12,1.0,0
+aks-openai-2023,conservative,399,WARN,BLOCK,True,2.87,0.94,0
+aks-openai-2023,default,399,ALLOW,BLOCK,True,5.96,0.94,0
+aks-openai-2023,aggressive,399,ALLOW,BLOCK,True,6.61,0.94,0
+assistant-openai-2024,conservative,6,WARN,BLOCK,True,2.76,1.0,0
+assistant-openai-2024,default,6,ALLOW,BLOCK,True,5.72,1.0,0
+assistant-openai-2024,aggressive,6,ALLOW,BLOCK,True,6.34,1.0,0

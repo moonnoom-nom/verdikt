@@ -31,12 +31,32 @@ SENSITIVITY_WEIGHTS = {
 }
 
 
+class WeightConfiguration(NamedTuple):
+    """A complete set of attenuation weights.
+
+    Extracted into a passable object so the sensitivity analysis can vary
+    weights without mutating module-level state. Mutating globals would make
+    the analysis order-dependent and impossible to reason about.
+    """
+    environment: dict[str, float]
+    exposure: dict[str, float]
+    sensitivity: dict[str, float]
+
+
+# The configuration used throughout the main evaluation.
+DEFAULT_WEIGHTS = WeightConfiguration(
+    environment=ENVIRONMENT_WEIGHTS,
+    exposure=EXPOSURE_WEIGHTS,
+    sensitivity=SENSITIVITY_WEIGHTS,
+)
+
+
 class ScoredVulnerability(NamedTuple):
     vulnerability_id: str
     package: str
     version: str
-    # All three of these are Optional: None means "no CVSS v3 score could be
-    # extracted," produced by unscored() below rather than by score_vulnerability().
+    # All three are Optional: None means no CVSS v3 score could be extracted,
+    # produced by unscored() rather than score_vulnerability().
     base_score: float | None
     contextual_score: float | None
     raw_score: float | None
@@ -46,6 +66,8 @@ class ScoredVulnerability(NamedTuple):
 
 def classify(score: float) -> str:
     """Map a score to a CVSS v3.1 severity band."""
+    # Boundaries taken from the CVSS v3.1 specification rather than invented,
+    # so contextual scores remain directly comparable with published base scores.
     if score >= 9.0:
         return "Critical"
     if score >= 7.0:
@@ -63,15 +85,23 @@ def score_vulnerability(
     version: str,
     base_score: float,
     policy: Policy,
+    weights: WeightConfiguration = DEFAULT_WEIGHTS,
 ) -> ScoredVulnerability:
     """Apply policy attenuation to a CVSS base score."""
-    env = ENVIRONMENT_WEIGHTS[policy.environment_tier]
-    exposure = EXPOSURE_WEIGHTS[policy.network_exposure]
-    sensitivity = SENSITIVITY_WEIGHTS[policy.data_sensitivity]
+    # Weights default to DEFAULT_WEIGHTS so every existing caller keeps working
+    # unchanged; only the sensitivity analysis passes alternatives.
+    env = weights.environment[policy.environment_tier]
+    exposure = weights.exposure[policy.network_exposure]
+    sensitivity = weights.sensitivity[policy.data_sensitivity]
 
-    # raw_score is unrounded and is what decision.py must compare against
+    # Multiplicative rather than additive: the factors compound. A vulnerability
+    # that is both internet-facing and in production is riskier than the sum of
+    # those conditions, because an attacker needs reachability AND a target
+    # worth reaching.
+    #
+    # raw_score is unrounded and is what decision.py compares against
     # thresholds. Rounding first would let 4.96 become 5.0 and wrongly cross
-    # a block threshold of 5.0 that it never actually reached.
+    # a block threshold of 5.0 it never actually reached.
     raw_score = min(base_score * env * exposure * sensitivity, base_score)
     display_score = round(raw_score, 1)
 
@@ -95,9 +125,8 @@ def score_vulnerability(
 def unscored(vulnerability_id: str, package: str, version: str, reason: str) -> ScoredVulnerability:
     """Placeholder result for a vulnerability with no usable CVSS v3 score.
 
-    Returned as a first-class result rather than dropped, so the finding
-    still surfaces to the developer and Chapter 7 can report how often
-    this happened during evaluation.
+    Returned as a first-class result rather than dropped, so the finding still
+    surfaces to the developer and Chapter 7 can report how often this happened.
     """
     return ScoredVulnerability(
         vulnerability_id=vulnerability_id,
