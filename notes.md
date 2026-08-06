@@ -136,3 +136,30 @@ the attenuation model breaks, that test fails immediately.
 Regression tests added for both bugs found earlier: the Decimal/float
 conversion in severity extraction, and the transparency bug where BLOCK
 discarded non-blocking findings.
+## 6 August — Modules 10 & 11: Evaluation and Sensitivity Analysis
+
+Built evaluate.py and sensitivity.py. Five archived Azure Sample repositories
+selected per Chapter 3 criteria, spanning 2016-2024 and four application types.
+Archived repos chosen deliberately: maintained projects remediate the
+vulnerabilities the evaluation needs.
+
+Results across 250 dependencies, 748 findings:
+- Verdict changed in 5/5 repositories
+- Context sensitivity 5.45-5.96 (default weights)
+- Band change rate 0.94-1.0
+
+Sensitivity analysis across conservative/default/aggressive weights:
+- 15/15 repository-configuration pairs changed verdict (100% decision stability)
+- Context sensitivity scales monotonically: 2.7 / 5.6 / 6.3
+- Band change rate stays 0.94-1.0 across all three — the effect is not an
+  artefact of extreme weighting
+
+Honest limitation identified: friction reduction is 1.0 everywhere because
+even conservative weights cap low-context scores at 5.76, below the 7.0 block
+threshold. This is arithmetic, not an empirical discovery, and Chapter 7 must
+say so.
+
+Inconsistency to document: sensitivity.py scores only findings with CVSS
+vectors, while evaluate.py includes unscored ones via scan_project. Since
+unscored findings force a WARN floor, low-context verdicts differ between the
+two tables for that reason.
