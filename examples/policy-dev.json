@@ -1,6 +1,8 @@
+@'
 {
   "environment_tier": "development",
-  "network_exposure": "internal",
+  "network_exposure": "air-gapped",
   "data_sensitivity": "public",
   "thresholds": { "warn": 4.0, "block": 7.0 }
 }
+'@ | Set-Content policy.json

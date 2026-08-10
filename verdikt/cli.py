@@ -26,11 +26,8 @@ def main() -> int:
             print(f"Warning: could not parse line {line_number}: {content}")
 
     decision = scan_project(deps, policy)
-
-    print(f"\nVerdikt: {decision.verdict.value}")
-    print(f"{decision.summary}\n")
-    for v in decision.contributing:
-        print(f"  - {v.package} {v.version} :: {v.vulnerability_id}: {v.contextual_score} ({v.band})")
+    from verdikt.reporter import render
+    render(decision, policy, len(deps))
 
     return decision.exit_code
 

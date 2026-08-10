@@ -1,0 +1,4 @@
+attribute,mean_score_delta,mean_verdict_change_rate,weight_range
+environment_tier,1.857,0.395,development to production
+network_exposure,2.388,0.423,air-gapped to internet-facing
+data_sensitivity,1.393,0.284,public to confidential

@@ -1,0 +1,25 @@
+{
+  "findings_analysed": 580,
+  "context_combinations": 27,
+  "thresholds": {
+    "warn": 4.0,
+    "block": 7.0
+  },
+  "attribute_effects": {
+    "environment_tier": {
+      "mean_score_delta": 1.857,
+      "mean_verdict_change_rate": 0.395,
+      "weight_range": "development to production"
+    },
+    "network_exposure": {
+      "mean_score_delta": 2.388,
+      "mean_verdict_change_rate": 0.423,
+      "weight_range": "air-gapped to internet-facing"
+    },
+    "data_sensitivity": {
+      "mean_score_delta": 1.393,
+      "mean_verdict_change_rate": 0.284,
+      "weight_range": "public to confidential"
+    }
+  }
+}
