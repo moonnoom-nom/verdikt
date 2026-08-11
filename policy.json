@@ -1,7 +1,8 @@
 
 {
-  "environment_tier": "development",
-  "network_exposure": "air-gapped",
-  "data_sensitivity": "public",
+  "environment_tier": "production",
+  "network_exposure": "internet-facing",
+  "data_sensitivity": "confidential",
   "thresholds": { "warn": 4.0, "block": 7.0 }
 }
+
