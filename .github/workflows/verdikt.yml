@@ -21,5 +21,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Verdikt scan
-        - name: Run Verdikt scan
         run: python -m verdikt.cli
